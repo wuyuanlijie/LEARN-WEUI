@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ActionSheet</title>
+    <style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    .weui-mask {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,.6);
+        z-index: 1000;
+        display: none;
+    }
+    /*actionsheet 组件样式 begin*/
+    .weui-actionsheet {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      /*背面*/
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      z-index: 5000;
+      background-color: #EFEFF4;
+      -webkit-transition: transform .3s;
+      transition: transform .3s;
+      /*translateY(正的是往下,负值往上移)*/
+      -webkit-transform: translate(0, 100%);
+      transform: translate(0, 100%);
+    }
+    /*actionsheet 组件样式 end*/
+    .weui-actionsheet_toggle {
+      -webkit-transform: translate(0, 0);
+      transform: translate(0, 0);
+    }
+    .weui-actionsheet__title {
+      position: relative;
+      height: 65px;
+      padding: 0 20px;
+      line-height: 1.4;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      /*使用text-align属性控制文本的水平方向的对齐方式：左对齐、居中对齐、右对齐*/
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+      background: #FCFCDF;
+    }
+    /*  -表示子元素 __表示下一级  */
+    .weui-actionsheet__title .weui-action__title-text {
+      /*截断文字 一般出现在移动端* 影响下面的高度 */
+      overflow: hidden;
+      /*文字超出父容器 打...*/
+      text-overflow: ellipsis;
+      /*超出不换行 将文字仅限于一行*/
+      /*white-space: nowrap;*/
+      /*box-orient 属性规定框的子元素应该被水平或垂直排列。*/
+      -webkit-box-orient: vertical;
+      /*启动界面弹性布局*/
+      display: -webkit-box;
+      /*行数为2行*/
+      -webkit-line-clamp: 2;
+    }
+    .weui-actionsheet__title:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      height: 1px;
+      border-bottom: 1px solid #e5e5e5;
+      /*从底部 底部不变化 x为0 y为100%最下面  0 0 就是左上角*/
+      transform-origin: 0 100%;
+      transform: scaleY(.5);
+    }
+    .weui-actionsheet__menu {
+      background-color: #FCFCFD;
+    }
+    .weui-actionsheet__cell {
+      position: relative;
+      padding: 10px 0;
+      text-align: center;
+      font-size: 18px;
+    }
+    .weui-actionsheet__cell:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      /*高度为1px 这样就可以显示下面的宽度 */
+      height: 1px;
+      border: 1px solid #e5e5e5;
+      color: #e5e5e5;
+      -webkit-transform-origin: 0 0;
+      transform-origin: 0 0;
+      -webkit-transform: scaleY(.5);
+      transform: scaleY(.5);
+    }
+    .weui-actionsheet__action {
+      margin-top: 6px;
+      background-color: #FCFCFB;
+    }
+
+
+    </style>
+</head>
+<body>
+<a href="javascript:;" class="btn">点击</a>
+<div>
+    <!--命名空间-->
+
+    <div class="weui-mask"></div>
+    
+    <!-- 核心交互组件 独立组件的开始 BLOCK独立区块 BEM修饰器weui-actionsheet_toggle-->
+    <div class="weui-actionsheet" id="iosActionSheet">
+      <!-- __Element组件的元素（两个下划线）下一层 title menu action -->
+      <div class="weui-actionsheet__title">
+        <!--  -->
+        <p class="weui-action__title-text">
+          这是一个标题，可以为一行或两行.这是一个标题，可以为一行或两行.这是一个标题，可以为一行或两行.这是一个标题，可以为一行或两行.这是一个标题，可以为一行或两行.这是一个标题，可以为一行或两行.这是一个标题，可以为一行或两行.这是一个标题，可以为一行或两行.
+        </p>
+      </div>
+      <div class="weui-actionsheet__menu">
+        <!-- 独立的cell的身份出现就是__ 两个下划线 和menu同行  -->
+        <div class="weui-actionsheet__cell">示例菜单</div>
+        <div class="weui-actionsheet__cell">示例菜单</div>
+        <div class="weui-actionsheet__cell">示例菜单</div>
+        <div class="weui-actionsheet__cell">示例菜单</div>
+      </div>
+      <div class="weui-actionsheet__action">
+        <div class="weui-actionsheet__cell" id="iosActionSheetCancel">取消</div>
+      </div>
+    </div>
+
+    <script>
+    const btn = document.querySelector('.btn');
+    const mask = document.querySelector('.weui-mask');
+    const iosActionSheet = document.querySelector('#iosActionSheet');
+    const cancel = document.querySelector('#iosActionSheetCancel');
+    btn.addEventListener('click', () => {
+        mask.style.display = 'block';
+        iosActionSheet.classList.add('weui-actionsheet_toggle')
+    }, false);
+
+    cancel.addEventListener('click', () => {
+      mask.style.display = 'none';
+      iosActionSheet.classList.remove('weui-actionsheet_toggle')
+    }, false);
+
+    </script>
+</div>
+</body>
+</html>

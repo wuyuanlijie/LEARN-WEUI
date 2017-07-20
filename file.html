@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta >
+  <title>HTML 5 File APIS</title>
+  <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <!-- 导入jquer库 src -->
+  <style>
+    .list-group {
+      border: 2px dashed #ccc;
+      min-height: 100px;
+      padding: 10px;
+    }
+    .list-group p {
+      color: #ccc;
+      line-height: 100px;
+      font-size: 30px;
+      text-align: center;
+    }
+    img {
+      /*图片大小默认不受限制
+      加上 max-width:100% 让它不超出
+      父元素的宽度
+      在高度会有适应*/
+      max-width: 100%;
+    }
+    #eventstatus {
+      margin-top: 10px;
+    }
+
+  </style>
+
+</head>
+<!-- html,body {宽度高度设置} -->
+<body>
+    <!-- CSS框架？weui 类名系统 -->
+    <header id="header" class="page-header">
+      <!-- bootstrap container核心类 给一个宽度 左右留白
+      最外层给个bootstrap给页面布局大小 1140+15*2大笔记本 -->
+      <div class="container">
+        <h1>文件列表</h1>
+        <h5>filelist</h5>
+      </div>
+    </header>
+    <div class="container">
+      <div class="row">
+        <ul class="list-group clearfix">
+
+        </ul>
+      </div>
+      <form action="" class="upload">
+        <!-- 使用交给这个按钮 样式可以做任何的定制，点击就相当于文件上传控件被点击 PC移动端 点了一个按钮 但其实 他是一个二手货 -->
+        <a href="javascript:;" id="selectbtn" class="btn btn-primary">上传文件</a>
+        <!-- 因为很丑 所以把它隐藏 用户体验的细节 -->
+        <input type="file" id="fileInput" style="display:none;" name="fileselect" multiple>
+      </form>
+      <div id="eventstatus"></div>
+    </div>
+
+
+    <!-- JS 阻塞页面加载  最好放在底部
+    html从上到下加载 下载到script就会停下来 下载完成 并执行一下 所以比较花时间 屏幕白一下 越多页面打开越慢 -->
+    <script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript">
+      const selectBtn = document.querySelector('#selectbtn');
+      console.log(selectBtn);
+      // jquery $选择器 基本等于querySelector
+      console.log( $('#selectbtn') )
+      // addEventListener 点击事件
+      //jquery 在三年 前端就是家的天下爱
+      // 选择器万能 querySelectorAll
+      // ！！！链式调用！！！ 代码编写更加优雅
+      $('#selectbtn').click( () => {
+        //点select 不点input
+        //js 触发triggle 事件
+        $('#fileInput').click();
+      });
+      //file change 事件在上传确定文件后触发
+      $('#fileInput').change( (event) => {
+        console.log("点击上传了文件");
+        displayFileInfo(event);  //运行这个函数
+      })
+      // 展示文件的信息
+      function displayFileInfo(event) {
+        //html5 上传文件api
+        //上传文件 处理顺序 FileList对象->File对象->临时的在客户端
+        //显示出来它的信息大小， 上传进度->服务器端上传
+
+        console.log(event);
+        var files = event.target.files;
+        console.log(files);
+        // for( var i = 0; i < files.length; i++ ) {
+        //   let file = file[i];
+        // }
+        //es6 文件循环API 不需要i，熟悉的for(file of files)
+        //es6 获取数据用`` 模块字符串
+        for(file of files){
+          // 字符串模板
+          // 多行 天生对html结构友好
+          // $('.list-group').html(`
+          //   <li class="file-info">
+          //     <p>文件名称：$(file.name)</p>
+          //     <p>文件大小：$(file.size)</p>
+          //     <p>文件类型：$(file.type)</p>
+          //   </li>
+          // `);
+
+          // // dom 编写通过js 创建html标签
+          // dom编程 api createElement(标签) 父元素.appendChild(子元素)
+          // var li = document.createElement('li'),
+          //    img = document.createElement('img'),
+          //    thumbnailContainer = document.createElement('div'),
+          //   // 构建一个blog的临时地址 将其在页面上显示
+          //   // 原因: 图片没到服务器，无地址可用，用户看不到，着急 html5提供了一个临时预览地址
+          //   //点击上传，即可见图片，并可清楚的了解文件上传的过程，比两眼一抹黑体验好很多；
+          //    url = window.URL.createObjectURL(file);  //参数是文件对象 创建文件地址
+
+             //面试注意 blob：协议是什么？ h5的临时图片预览协议 关闭浏览器就会失效
+             //why? 硬盘地址和web 地址不一样 无法使用！ 参数对象 url = window.URL.createObjectURL(file);
+            //  console.log(url);
+            //  img.src = url;//刚刚生成的
+            //  thumbnailContainer.appendChild(img);
+            //  li.appendChild(thumbnailContainer);
+            //  $('.list-group').append(li); //添加节点
+            // //  listGroup.appendChild(li);
+
+             //div class="col-md-3"
+             //``模块字符串  ${file.name} 模块占位符起到一个传值得作用(这个只有在``里面起作用)
+            let url = window.URL.createObjectURL(file);
+            // let fileSize = parseFloat(file.size/(1024)).toFixed(2);
+            let fileSize = parseInt(file.size/(1024));
+            const liStr = `
+              <li class='list-group-item'>
+                <div >
+                  <img class="thumbnail" src="${url}" />
+                  <div class="file-infos">
+                      <h3 class="title">${file.name}</h3>
+                      <p class="size">${fileSize}kb</p>
+                      <p class="type">${file.type}</p>
+                  </div>
+                </div>
+              </li>
+            `;
+            //重设html 以前的都没有了
+            // $('.list-group').html(liStr);
+
+            // append 而不是重设置 参数是一个html节点 而不是html字符串 append添加节点
+            // jquery $()第二个作用 将html字符串变成文字节点
+            $('.list-group').append(liStr);
+        }
+
+      }
+
+    </script>
+</body>
+</html>
